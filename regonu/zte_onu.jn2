@@ -1,0 +1,32 @@
+configure terminal
+interface gpon-olt_{{ olt_iface }}
+onu {{ onu_id }} type {{ onu_type }} sn {{ onu_sn }}
+!
+interface gpon-onu_{{ onu_iface }}
+  description {{ onu_desc }}
+  sn-bind enable sn
+  tcont 1 name unlim profile unlim
+  gemport 1 name unlim unicast tcont 1 dir both
+{%- if onu_mode == 'a' %}
+  switchport mode hybrid vport 1
+  service-port 1 vport 1 user-vlan {{ onu_pvid }} vlan {{ onu_pvid }}
+{%- elif onu_mode == 'h' or onu_mode == 't' %}
+  switchport mode trunk vport 1
+  switchport vlan {{ onu_vlans }} tag vport 1
+{%- endif %}
+!
+pon-onu-mng gpon-onu_{{ onu_iface }}
+{%- if onu_mode == 'a' %}
+  service HSI type internet gemport 1 cos 0 vlan {{ onu_pvid }}
+  vlan port eth_0/1 mode tag vlan {{ onu_pvid }}
+{%- elif onu_mode == 'h' %}
+  gemport 1 flow 1
+  vlan port eth_0/1 mode hybrid def-vlan {{ onu_pvid }}
+{%- if onu_tags != '' %}
+  vlan port eth_0/1 vlan {{ onu_tags }}
+{%- endif %}
+{%- elif onu_mode == 't' %}
+  gemport 1 flow 1
+  vlan port eth_0/1 mode transparent
+{%- endif %}
+!
