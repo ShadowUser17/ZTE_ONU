@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html><head>
+    <!-- ********************* -->
+    <meta charset="UTF-8">
+    <title>Access Control</title>
+    <!-- ********************* -->
+</head>
+<body>
+    <!-- ********************* -->
+    <br><br><br><br><br><br>
+    <table align="center">
+        <tr><td>
+            <!-- ********************* -->
+            <fieldset>
+                <legend>Check Access</legend>
+                <form action="/cgi/handler.py" method="POST">
+                    <input type="hidden" name="form_id" value="auth">
+                    <!-- ********************* -->
+                    <table>
+                        <tr>
+                            <td>Login:</td>
+                            <td><input type="TEXT" name="login" required></td>
+                        </tr>
+                        <tr>
+                            <td>Password:</td>
+                            <td><input type="PASSWORD" name="passwd" required></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td><input type="submit" value="Submit"></td>
+                        </tr>
+                    </table>
+                    <!-- ********************* -->
+                </form>
+            </fieldset>
+            <!-- ********************* -->
+        </td></tr>
+    </table>
+    <!-- ********************* -->
+</body></html>
+
