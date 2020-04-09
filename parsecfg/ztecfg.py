@@ -16,11 +16,9 @@ class ParseZTE:
         self._onu = ''
         self._mng = ''
     #
-    def load_from_file(self, fname):
-        with open(fname) as fd:
-            tmp = fd.read()
-            tmp = map(str.lstrip, tmp.split('!'))
-            self._raw = list(map(str.rstrip, tmp))
+    def _loader(self, raw):
+        raw = map(str.lstrip, raw.split('!'))
+        self._raw = list(map(str.rstrip, raw))
     #
     def _parser(self, regex):
         raw = iter(self._raw)
@@ -36,11 +34,44 @@ class ParseZTE:
         #
         return data
     #
-    def parse(self):
+    def parse_cfg(self):
         self._olt = self._parser(self._parser_olt)
         self._onu = self._parser(self._parser_onu)
         self._mng = self._parser(self._parser_mng)
         self._raw = ''
+    #
+    def load_from_string(self, raw): self._loader(raw)
+    #
+    def load_from_file(self, fname):
+        with open(fname) as fd: self._loader(fd.read())
+    #
+    def find_from_sn(self, sn):
+        onus = []
+        #
+        for olt in self._olt.keys():
+            onu = list(filter(lambda item: item[-1] == sn, self._olt[olt]))
+            if onu: onus.append((olt, onu[0]))
+        #
+        return onus
+    #
+    def get_by_sn(self, sn):
+        onus = self.find_from_sn(sn)
+        #
+        items = []
+        for (olt, onu) in onus:
+            olt_port = olt
+            onu_port = '{}:{}'.format(olt_port, onu[1])
+            #
+            olt = [self._olt[olt][0], onu]
+            onu = self._onu[onu_port]
+            mng = self._mng[onu_port]
+            #
+            items.append((olt, onu, mng))
+        #
+        return items
+    #
+    #@classmethod
+    #def replace_port(self, old, new, obj): pass
     #
     @classmethod
     def print(self, obj, fd=stdout):
