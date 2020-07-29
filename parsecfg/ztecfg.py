@@ -46,6 +46,7 @@ class ParseZTE:
         with open(fname) as fd: self._loader(fd.read())
     #
     def find_from_sn(self, sn):
+        sn = sn.upper()
         onus = []
         #
         for olt in self._olt.keys():
